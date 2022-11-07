@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cn.langkye.bjtoon-uia-sdk</groupId>
+    <artifactId>bjtoon-uia-sdk</artifactId>
+    <version>1.2</version>
+    <name>bjtoon-uia-sdk</name>
+    <description>
+
+        Bjtoon_Uia Auth SDK for Java
+
+        Copyright © 2022 langkye
+        All rights reserved.
+
+    </description>
+
+    <developers>
+        <developer>
+            <id>bjtoon-uia</id>
+            <name>bjtoon-uia</name>
+            <email>qinyi@syswin.com</email>
+        </developer>
+        <developer>
+            <id>langkye</id>
+            <name>langkye</name>
+            <email>langkye@gmail.com</email>
+        </developer>
+    </developers>
+
+    <distributionManagement>
+        
+    </distributionManagement>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:langkye/bjtoon-uia-sdk.git</connection>
+        <developerConnection>scm:git:git@github.com:langkye/bjtoon-uia-sdk.git</developerConnection>
+        <url>https://github.com/langkye/bjtoon-uia-sdk</url>
+        <tag>1.2</tag>
+    </scm>
+
+    <properties>
+        <java.version>1.8</java.version>
+        
+        <!--tools start -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <commons-lang3-version>3.12.0</commons-lang3-version>
+        <commons-codec-version>1.13</commons-codec-version>
+        <apache-httpclient-version>4.5.13</apache-httpclient-version>
+        <fastjson-version>2.0.17</fastjson-version>
+        <!--tools end -->
+
+        <!-- AES/DES encryption need to replace jce files in JDK -->
+        <bcprov-jdk15-version>1.46</bcprov-jdk15-version>
+        <!-- AES/DES end end -->
+
+        <!--maven plugins start -->
+        <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
+        <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
+        <maven-clean-plugin-version>2.6.1</maven-clean-plugin-version>
+        <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
+        <maven-source-plugin-version>2.2.1</maven-source-plugin-version>
+        <maven-gpg-plugin-version>3.0.1</maven-gpg-plugin-version>
+        <!--maven plugins end -->
+
+        <github.global.server>github</github.global.server>
+        <maven-source-plugin.version>3.0.0</maven-source-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
+        <site-maven-plugin.version>0.12</site-maven-plugin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${apache-httpclient-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15</artifactId>
+            <version>${bcprov-jdk15-version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Jar -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>${maven-jar-plugin-version}</version>
+                    </plugin>
+                    <!-- Source -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Compile -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${maven-compiler-plugin-version}</version>
+                        <configuration>
+                            <source>1.5</source>
+                            <target>1.5</target>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                    </plugin>
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- GPG Sign-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- 源码插件 -->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>${maven-source-plugin.version}</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>${maven-deploy-plugin.version}</version>
+                <configuration>
+                    <altDeploymentRepository>
+                        internal.repo::default::file://${project.build.directory}/maven-repository
+                    </altDeploymentRepository>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>${site-maven-plugin.version}</version>
+                <configuration>
+                    <message>Maven artifacts for ${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    <outputDirectory>${project.build.directory}/maven-repository</outputDirectory><!--本地jar地址-->
+                    <branch>refs/heads/main</branch><!--分支-->
+                    <merge>true</merge>
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                    <repositoryName>maven-repository</repositoryName><!--对应github上创建的仓库名称 name-->
+                    <repositoryOwner>langkye</repositoryOwner><!--github 仓库所有者-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

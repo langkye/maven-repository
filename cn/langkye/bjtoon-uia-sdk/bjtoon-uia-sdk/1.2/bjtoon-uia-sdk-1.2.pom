@@ -31,7 +31,11 @@
     </developers>
 
     <distributionManagement>
-        
+        <repository>
+            <id>maven.repo</id>
+            <name>Local Staging Repository</name>
+            <url>file://${project.build.directory}/maven-repository</url>
+        </repository>
     </distributionManagement>
 
     <licenses>
@@ -61,6 +65,9 @@
 
         <!-- AES/DES encryption need to replace jce files in JDK -->
         <bcprov-jdk15-version>1.46</bcprov-jdk15-version>
+        <bcprov-jdk18on-version>1.72</bcprov-jdk18on-version>
+        <bcprov-jdk15to18-version>1.72</bcprov-jdk15to18-version>
+        
         <!-- AES/DES end end -->
 
         <!--maven plugins start -->
@@ -73,10 +80,13 @@
         <!--maven plugins end -->
 
         <github.global.server>github</github.global.server>
-        <maven-source-plugin.version>3.0.0</maven-source-plugin.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
         <site-maven-plugin.version>0.12</site-maven-plugin.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <logback.version>1.2.11</logback.version>
+        <junit.version>4.13.2</junit.version>
     </properties>
 
     <dependencies>
@@ -100,10 +110,42 @@
             <artifactId>fastjson</artifactId>
             <version>${fastjson-version}</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15</artifactId>
             <version>${bcprov-jdk15-version}</version>
+        </dependency>
+        -->
+        <!--
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bcprov-jdk18on-version}</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15to18</artifactId>
+            <version>${bcprov-jdk15to18-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -138,8 +180,8 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>${maven-compiler-plugin-version}</version>
                         <configuration>
-                            <source>1.5</source>
-                            <target>1.5</target>
+                            <source>1.8</source>
+                            <target>1.8</target>
                             <encoding>UTF-8</encoding>
                         </configuration>
                     </plugin>
@@ -176,10 +218,10 @@
             </build>
         </profile>
     </profiles>
-
-
+    
     <build>
         <plugins>
+            <!--编译插件-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -209,6 +251,7 @@
                 </executions>
             </plugin>
 
+            <!--部署插件：打包部署在项目下：./target/maven-repository-->
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -220,22 +263,28 @@
                 </configuration>
             </plugin>
 
-
+            <!--Github仓库发布插件：将打包部署的本地文件发布到Github仓库中-->
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
                 <version>${site-maven-plugin.version}</version>
                 <configuration>
+                    <server>github</server>
                     <message>Maven artifacts for ${project.version}</message>
                     <noJekyll>true</noJekyll>
-                    <outputDirectory>${project.build.directory}/maven-repository</outputDirectory><!--本地jar地址-->
-                    <branch>refs/heads/main</branch><!--分支-->
+                    <!--本地jar地址-->
+                    <outputDirectory>${project.build.directory}/maven-repository</outputDirectory>
+                    <!--分支-->
+                    <branch>refs/heads/main</branch>
                     <merge>true</merge>
                     <includes>
                         <include>**/*</include>
                     </includes>
-                    <repositoryName>maven-repository</repositoryName><!--对应github上创建的仓库名称 name-->
-                    <repositoryOwner>langkye</repositoryOwner><!--github 仓库所有者-->
+                    <!--对应github上创建的仓库名称 name-->
+                    <repositoryName>maven-repository</repositoryName>
+                    <!--<repositoryName>bjtoon-uia-sdk</repositoryName>-->
+                    <!--github 仓库所有者-->
+                    <repositoryOwner>langkye</repositoryOwner>
                 </configuration>
                 <executions>
                     <execution>

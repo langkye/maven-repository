@@ -32,10 +32,11 @@
     </developers>
 
     <scm>
+        <tag>1.0.0.RELEASE</tag>
         <connection>scm:git:git@github.com:langkye/awesome-uia-sdk.git</connection>
         <developerConnection>scm:git:git@github.com:langkye/awesome-uia-sdk.git</developerConnection>
-        <url>https://github.com/langkye/awesome-uia-sdk</url>
-        <tag>1.0.0.RELEASE</tag>
+        <!--<url>https://github.com/langkye/awesome-uia-sdk</url>-->
+        <url>https://github.com/langkye/awesome-uia-sdk/tree/${project.scm.tag}</url>
     </scm>
 
 
@@ -66,16 +67,17 @@
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-        <!--maven plugins end -->
-        
-        
-        <github.global.server>github</github.global.server>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
         <site-maven-plugin-maven.version>3.12.1</site-maven-plugin-maven.version>
         <site-maven-plugin-github.version>0.12</site-maven-plugin-github.version>
         <maven-project-info-reports-plugin.version>3.4.2</maven-project-info-reports-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <!--maven plugins end -->
+        
+        
+        <github.global.server>github</github.global.server>
         <slf4j.version>1.7.36</slf4j.version>
         <logback.version>1.2.11</logback.version>
         <junit.version>4.13.2</junit.version>
@@ -183,6 +185,14 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
                         <version>${maven-jar-plugin.version}</version>
+                        <configuration>
+                            <archive>
+                                <addMavenDescriptor>false</addMavenDescriptor>
+                                <manifestEntries>
+                                    <Built-By>langkye</Built-By>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
                     </plugin>
                     <!-- Source -->
                     <plugin>
@@ -191,12 +201,23 @@
                         <version>${maven-source-plugin.version}</version>
                         <executions>
                             <execution>
+                                <id>package</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
+                            <execution>
+                                <id>compile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
                         </executions>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
                     </plugin>
                     <!-- Compile -->
                     <plugin>
@@ -214,9 +235,20 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <aggregate>true</aggregate>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                        </configuration>
                         <executions>
                             <execution>
                                 <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>attach-javadocs</id>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
@@ -237,6 +269,18 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <!-- nexus-staging -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexus-staging-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -342,15 +386,23 @@
             </plugins>
         </pluginManagement>
     </build>
-
-
-
+    
     <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <!--
         <repository>
             <id>maven.repo</id>
             <name>Local Staging Repository</name>
             <url>file://${project.build.directory}/maven-repository</url>
         </repository>
+        -->
     </distributionManagement>
-    
 </project>
